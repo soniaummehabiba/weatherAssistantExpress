@@ -35,7 +35,7 @@ router.post('/webhook', (req, res, next) => {
         return axios
             .get(requestURL)
             .then(res => {
-                console.log(res);
+                console.log(res.data);
                 return agent.add('ok wait')
             })
             .catch(err => {
