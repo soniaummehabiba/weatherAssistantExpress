@@ -24,18 +24,21 @@ router.post('/webhook', (req, res, next) => {
 
     function weather(agent) {
         let params = agent.parameters;
-        console.info(params);
+        console.info('params ', params);
 
-        /*let queryParameters = ``;
+        let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
+        console.info('queryParameters ' , queryParameters);
 
-        axios.get(openWeatherBaseUrl + '&' + queryParameters)
-            .then(response => {
-                console.log(response);
+        return axios
+            .get(openWeatherBaseUrl + '&' + queryParameters)
+            .then(res => {
+                console.log(res);
+                return agent.add('ok wait')
             })
-            .catch(error => {
-                console.log(error);
-            })*/
-        agent.add('ok wait')
+            .catch(err => {
+                console.log(`error in getting details: ${err}`);
+                return agent.add(`error in getting details: ${err}`)
+            });
     }
 });
 
