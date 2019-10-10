@@ -19,7 +19,8 @@ router.post('/webhook', (req, res, next) => {
     let intentMap = new Map();
 
     intentMap.set('weather', weather);
-    intentMap.set('weather - context:weather - comment:condition', conditionalWeather);
+    intentMap.set('weather - context:weather - comment:condition', condition);
+    intentMap.set('weather.condition', weatherWithCondition);
 
     agent.handleRequest(intentMap);
 
@@ -45,7 +46,7 @@ router.post('/webhook', (req, res, next) => {
             });
     }
 
-    function conditionalWeather(agent) {
+    function condition(agent) {
         let params = agent.parameters;
         console.info('params ', params);
 
@@ -61,6 +62,28 @@ router.post('/webhook', (req, res, next) => {
             .then(res => {
                 let {name, weather} = res.data;
                 return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${contexts.address.city ? contexts.address.city : contexts.address.country}`)
+            })
+            .catch(err => {
+                console.log(`error in getting details: ${err}`);
+                return agent.add(`error in getting details: ${err}`)
+            });
+    }
+
+    function weatherWithCondition(agent) {
+        let params = agent.parameters;
+        console.info('params ', params);
+
+        let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
+        console.info('queryParameters ', queryParameters);
+
+        let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
+        console.info('requestURL ', requestURL);
+
+        return axios
+            .get(requestURL)
+            .then(res => {
+                let {name, weather} = res.data;
+                return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${params.address.city ? params.address.city : params.address.country}`)
             })
             .catch(err => {
                 console.log(`error in getting details: ${err}`);
