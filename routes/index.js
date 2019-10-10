@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const {WebhookClient} = require('dialogflow-fulfillment');
 
-const openWeatherBaseUrl = 'api.openweathermap.org/data/2.5/weather?appid=d707e4d88986e6b6ad07bb5330416214';
+const openWeatherBaseUrl = 'https://api.openweathermap.org/data/2.5/weather?appid=d707e4d88986e6b6ad07bb5330416214';
 
 router.get('/', (req, res, next) => {
     res.send(`Server is up and running.`);
