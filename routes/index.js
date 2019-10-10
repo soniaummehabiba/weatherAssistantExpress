@@ -36,8 +36,8 @@ router.post('/webhook', (req, res, next) => {
             .get(requestURL)
             .then(res => {
                 let {name, main} = res.data;
-                console.log();
-                return agent.add(`The temperature of ${name} is 22'C and humidity is 60%`)
+                console.log(res.data);
+                return agent.add(`The temperature of ${name} is ${main.temp}'C and humidity is ${main.humidity}%`)
             })
             .catch(err => {
                 console.log(`error in getting details: ${err}`);
