@@ -60,7 +60,7 @@ router.post('/webhook', (req, res, next) => {
             .get(requestURL)
             .then(res => {
                 let {name, weather} = res.data;
-                return agent.add(`Its ${weather[0].main} (${weather[0].description})`)
+                return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${contexts.address.city ? contexts.address.city : contexts.address.country}`)
             })
             .catch(err => {
                 console.log(`error in getting details: ${err}`);
