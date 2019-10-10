@@ -28,7 +28,8 @@ router.post('/webhook', (req, res, next) => {
         let params = agent.parameters;
         console.info('params ', params);
 
-        let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
+        let location = params.address.city ? params.address.city : params.address.country;
+        let queryParameters = `q=${location}`;
         console.info('queryParameters ', queryParameters);
 
         let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
@@ -51,7 +52,8 @@ router.post('/webhook', (req, res, next) => {
         console.info('params ', params);
 
         let contexts = agent.contexts[0].parameters;
-        let queryParameters = `q=${contexts.address.city ? contexts.address.city : contexts.address.country}`;
+        let location = contexts.address.city ? contexts.address.city : contexts.address.country;
+        let queryParameters = `q=${location}`;
         console.info('queryParameters ', queryParameters);
 
         let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
@@ -60,8 +62,16 @@ router.post('/webhook', (req, res, next) => {
         return axios
             .get(requestURL)
             .then(res => {
-                let {name, weather} = res.data;
-                return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${contexts.address.city ? contexts.address.city : contexts.address.country}`)
+                let {name, weather, wind} = res.data;
+                switch (params.condition) {
+                    case 'rain': {
+                        return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${name}`);
+                        break;
+                    }
+                    case 'wind': {
+                        return agent.add(`In ${name} wind speed is ${wind.speed} km/hr and wind direction is ${wind.deg} degrees`);
+                    }
+                }
             })
             .catch(err => {
                 console.log(`error in getting details: ${err}`);
@@ -73,7 +83,8 @@ router.post('/webhook', (req, res, next) => {
         let params = agent.parameters;
         console.info('params ', params);
 
-        let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
+        let location = params.address.city ? params.address.city : params.address.country;
+        let queryParameters = `q=${location}`;
         console.info('queryParameters ', queryParameters);
 
         let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
@@ -82,8 +93,16 @@ router.post('/webhook', (req, res, next) => {
         return axios
             .get(requestURL)
             .then(res => {
-                let {name, weather} = res.data;
-                return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${params.address.city ? params.address.city : params.address.country}`)
+                let {name, weather, wind} = res.data;
+                switch (params.condition) {
+                    case 'rain': {
+                        return agent.add(`Its ${weather[0].main} (${weather[0].description}) in ${name}`);
+                        break;
+                    }
+                    case 'wind': {
+                        return agent.add(`In ${name} wind speed is ${wind.speed} km/hr and wind direction is ${wind.deg} degrees`);
+                    }
+                }
             })
             .catch(err => {
                 console.log(`error in getting details: ${err}`);
