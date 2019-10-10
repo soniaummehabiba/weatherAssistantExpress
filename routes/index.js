@@ -19,6 +19,7 @@ router.post('/webhook', (req, res, next) => {
     let intentMap = new Map();
 
     intentMap.set('weather', weather);
+    intentMap.set('weather - context:weather - comment:condition', conditionalWeather);
 
     agent.handleRequest(intentMap);
 
@@ -27,10 +28,10 @@ router.post('/webhook', (req, res, next) => {
         console.info('params ', params);
 
         let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
-        console.info('queryParameters ' , queryParameters);
+        console.info('queryParameters ', queryParameters);
 
         let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
-        console.info('requestURL ' , requestURL);
+        console.info('requestURL ', requestURL);
 
         return axios
             .get(requestURL)
@@ -43,6 +44,12 @@ router.post('/webhook', (req, res, next) => {
                 console.log(`error in getting details: ${err}`);
                 return agent.add(`error in getting details: ${err}`)
             });
+    }
+
+    function conditionalWeather(agent) {
+        let params = agent.parameters;
+        console.info('params ', params);
+
     }
 });
 
