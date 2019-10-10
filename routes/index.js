@@ -47,10 +47,12 @@ router.post('/webhook', (req, res, next) => {
 
     function conditionalWeather(agent) {
         let params = agent.parameters;
-        let contexts = agent.contexts;
+        let contexts = agent.contexts[0].parameters;
         console.info('params ', params);
-        console.info('contexts ', contexts);
-
+        if (params.condition && params.condition === 'rain') {
+            let queryParameters = `q=${contexts.address.city ? contexts.address.city : contexts.address.country}`;
+            console.info('queryParameters ', queryParameters);
+        }
     }
 });
 
