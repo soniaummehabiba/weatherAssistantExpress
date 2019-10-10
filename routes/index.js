@@ -29,8 +29,11 @@ router.post('/webhook', (req, res, next) => {
         let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
         console.info('queryParameters ' , queryParameters);
 
+        let requestURL = openWeatherBaseUrl + '&' + queryParameters;
+        console.info('requestURL ' , requestURL);
+
         return axios
-            .get(openWeatherBaseUrl + '&' + queryParameters)
+            .get(requestURL)
             .then(res => {
                 console.log(res);
                 return agent.add('ok wait')
