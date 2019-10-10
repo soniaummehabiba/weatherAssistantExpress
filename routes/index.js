@@ -47,12 +47,25 @@ router.post('/webhook', (req, res, next) => {
 
     function conditionalWeather(agent) {
         let params = agent.parameters;
-        let contexts = agent.contexts[0].parameters;
         console.info('params ', params);
-        if (params.condition && params.condition === 'rain') {
-            let queryParameters = `q=${contexts.address.city ? contexts.address.city : contexts.address.country}`;
-            console.info('queryParameters ', queryParameters);
-        }
+
+        let contexts = agent.contexts[0].parameters;
+        let queryParameters = `q=${contexts.address.city ? contexts.address.city : contexts.address.country}`;
+        console.info('queryParameters ', queryParameters);
+
+        let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
+        console.info('requestURL ', requestURL);
+
+        return axios
+            .get(requestURL)
+            .then(res => {
+                let {name, weather} = res.data;
+                return agent.add(`Its ${weather[0].main} (${weather.description})`)
+            })
+            .catch(err => {
+                console.log(`error in getting details: ${err}`);
+                return agent.add(`error in getting details: ${err}`)
+            });
     }
 });
 
