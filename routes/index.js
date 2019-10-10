@@ -29,14 +29,15 @@ router.post('/webhook', (req, res, next) => {
         let queryParameters = `q=${params.address.city ? params.address.city : params.address.country}`;
         console.info('queryParameters ' , queryParameters);
 
-        let requestURL = openWeatherBaseUrl + '&' + queryParameters;
+        let requestURL = openWeatherBaseUrl + '&' + queryParameters + '&units=metric';
         console.info('requestURL ' , requestURL);
 
         return axios
             .get(requestURL)
             .then(res => {
-                console.log(res.data);
-                return agent.add('ok wait')
+                let {name, main} = res.data;
+                console.log();
+                return agent.add(`The temperature of ${name} is 22'C and humidity is 60%`)
             })
             .catch(err => {
                 console.log(`error in getting details: ${err}`);
