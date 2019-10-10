@@ -48,7 +48,9 @@ router.post('/webhook', (req, res, next) => {
 
     function conditionalWeather(agent) {
         let params = agent.parameters;
+        let contexts = agent.contexts;
         console.info('params ', params);
+        console.info('contexts ', contexts);
 
     }
 });
